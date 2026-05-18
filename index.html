@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>𝐃𝐞𝑥 𝐙𝐨𝐧𝐞 [ 𝐕𝐬𝐃𝐞𝑥 𝐒𝐭𝐨𝐫 ]</title>
+    <title>𝐃𝐞𝑥 𝐙о𝐧𝐞 [ 𝐕𝐬𝐃𝐞𝑥 𝐒𝐭о𝐫 ]</title>
     
     <link rel="icon" type="image/png" href="https://img1.pic.in.th/images/Beige_Black_Minimal_Simple_Modern_Handwritten_Graffiti_Typographic_Arts_and_20260410_052014_0000.png">
     
@@ -500,6 +500,18 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
 
+        .gacha-status-indicator {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
         .luck-selector-container {
             display: flex;
             justify-content: center;
@@ -566,7 +578,7 @@
             will-change: transform;
         }
 
-        .gacha-item-node {
+        .gacha-carousel-inner > div {
             width: 130px;
             height: 130px;
             background: rgba(255, 255, 255, 0.02);
@@ -582,12 +594,12 @@
             transition: background 0.3s;
         }
 
-        .gacha-item-node.tier-common { border-bottom: 4px solid #b3b3b3; }
-        .gacha-item-node.tier-rare { border-bottom: 4px solid #3b82f6; background: linear-gradient(to top, rgba(59,130,246,0.1), transparent); }
-        .gacha-item-node.tier-epic { border-bottom: 4px solid #a855f7; background: linear-gradient(to top, rgba(168,85,247,0.1), transparent); }
-        .gacha-item-node.tier-legendary { border-bottom: 4px solid #eab308; background: linear-gradient(to top, rgba(234,179,8,0.1), transparent); }
+        .gacha-carousel-inner > div.tier-common { border-bottom: 4px solid #b3b3b3; }
+        .gacha-carousel-inner > div.tier-rare { border-bottom: 4px solid #3b82f6; background: linear-gradient(to top, rgba(59,130,246,0.1), transparent); }
+        .gacha-carousel-inner > div.tier-epic { border-bottom: 4px solid #a855f7; background: linear-gradient(to top, rgba(168,85,247,0.1), transparent); }
+        .gacha-carousel-inner > div.tier-legendary { border-bottom: 4px solid #eab308; background: linear-gradient(to top, rgba(234,179,8,0.1), transparent); }
 
-        .gacha-item-node .gacha-icon {
+        .gacha-carousel-inner > div .gacha-icon {
             width: 45px;
             height: 45px;
             display: flex;
@@ -595,12 +607,12 @@
             align-items: center;
         }
 
-        .gacha-item-node .gacha-icon-text {
+        .gacha-carousel-inner > div .gacha-icon-text {
             font-size: 38px;
             filter: drop-shadow(0 0 8px rgba(255,255,255,0.1));
         }
 
-        .gacha-item-node span {
+        .gacha-carousel-inner > div span {
             font-size: 11px;
             font-weight: bold;
             white-space: nowrap;
@@ -856,12 +868,12 @@
 
     <div id="shop-page" style="display: none;">
         <div class="navbar">
-            <div class="logo">𝐃𝐞𝑥 𝐙𝐨𝐧𝐞 [ 𝐕𝐬𝐃𝐞𝑥 𝐒𝐭𝐨𝐫 ]</div>
+            <div class="logo">𝐃𝐞𝑥 𝐙о𝐧𝐞 [ 𝐕𝐬𝐃𝐞𝑥 𝐒𝐭о𝐫 ]</div>
             
             <div class="nav-menu">
                 <button class="nav-menu-btn active" id="menu-shop-btn" onclick="togglePages('shop')">🛒 ร้านค้าไอเทม</button>
                 <button class="nav-menu-btn" id="menu-gacha-btn" onclick="togglePages('gacha')">🎁 สุ่มกล่อง GTA SAMP</button>
-                <button class="nav-menu-btn" id="menu-wallet-btn" onclick="togglePages('wallet')">🧡 เติมเงินวอเล็ต</button>
+                <button class="nav-menu-btn" id="menu-wallet-btn" onclick="togglePages('wallet')">🧡 เติมเงินวоเล็ต</button>
                 <button class="nav-menu-btn" id="menu-redeem-btn" onclick="togglePages('redeem')">🎁 กรอกโค้ดรับรางวัล</button>
                 <button class="nav-menu-btn" id="menu-profile-btn" onclick="togglePages('profile')">⚙️ ตั้งค่า & ประวัติ</button>
                 <button class="nav-menu-btn admin-btn" id="menu-admin-btn" onclick="togglePages('admin')" style="display: none;">👑 กระดานรับเงิน</button>
@@ -901,6 +913,10 @@
                 <h3 style="font-size: 22px; margin-bottom: 6px; color: #fff;">📦 กล่องซิ่ง SAMP ลุ้นตัวเกมแรร์มหาโหด</h3>
                 <p style="color: #aaa; font-size: 14px; margin-bottom: 15px;">เลือกอัตราเพิ่มโชคเพื่อช่วยเพิ่มโอกาสดรอปตัวเกมในฝันของคุณ!</p>
                 
+                <div id="gacha-status-container" style="display: none; margin-bottom: 15px;">
+                    <span class="gacha-status-indicator" id="gacha-limit-status">🔒 ตัวเกมแรร์ชิ้นสุดท้ายถูกสุ่มไปแล้ว! ในกล่องจะเหลือเพียงรางวัลปลอบใจ</span>
+                </div>
+
                 <div class="luck-selector-container">
                     <button class="luck-btn active" id="luck-p0" onclick="setGachaLuck(0)">🍀 เพิ่มโชค 0% (ใช้ 1P)</button>
                     <button class="luck-btn" id="luck-p13" onclick="setGachaLuck(1.3)">🔥 เพิ่มโชค 1.3% (ใช้ 5P)</button>
@@ -991,7 +1007,7 @@
             
             <div class="admin-grid">
                 <div class="admin-card total">
-                    <div class="admin-card-title">💵 รายรับรวมสุทธิในระบบ</div>
+                    <div class="admin-card-title">💵 รายรับรวมสุทธิ in ระบบ</div>
                     <div class="admin-card-value"><span id="admin-total-revenue">0</span> THB</div>
                 </div>
                 <div class="admin-card wallet">
@@ -1080,42 +1096,14 @@
             <img src="https://img1.pic.in.th/images/Beige_Black_Minimal_Simple_Modern_Handwritten_Graffiti_Typographic_Arts_and_20260410_052014_0000.png" style="width: 100%; height: 100%; border-radius: 6px; object-fit: cover;">
         </div>`;
 
-        // บล็อกเซ็ตไอเทมเพื่อความยากขั้นสุด (Weight ตัวเกมแรร์เหลือเพียง 0.2 กองเกลือมีน้ำหนักมากถึง 60)
-        const GACHA_ITEMS = [
+        // ลิสต์ไอเทมเริ่มต้นเริ่มต้น (ตัวเกมแรร์จะมีโอกาสสุ่มได้ตราบใดที่ยังไม่มีใครได้ไป)
+        let GACHA_ITEMS = [
             { 
-                name: "Shop(2) (ตัวเกมแรร์)", 
+                name: "R3XRoom (ตัวเกมแรร์)", 
                 icon: SHOP_LOGO_HTML, 
                 tier: "tier-legendary", 
                 weight: 0.2, 
-                downloadUrl: "https://www.mediafire.com/file/x2d3zc9t4szovl0/Shop(2).rar/file"
-            },
-            { 
-                name: "Web_shop_game (ตัวเกมแรร์ใหม่)", 
-                icon: SHOP_LOGO_HTML, 
-                tier: "tier-legendary", 
-                weight: 0.2, 
-                downloadUrl: "https://www.mediafire.com/file/r97fgzt2gvns6j8/Web_shop_game.rar/file"
-            },
-            { 
-                name: "Web_shop_game_random_bypluem2 (ตัวแรร์ล่าสุด)", 
-                icon: SHOP_LOGO_HTML, 
-                tier: "tier-legendary", 
-                weight: 0.2, 
-                downloadUrl: "https://www.mediafire.com/file/mma5phojp0dsq4c/Web_shop_game_random_bypluem-20220528T151341Z-001.zip/file"
-            },
-            { 
-                name: "DARK_SHOP (ตัวเกมระดับแรร์มืด)", 
-                icon: SHOP_LOGO_HTML, 
-                tier: "tier-legendary", 
-                weight: 0.2, 
-                downloadUrl: "https://www.mediafire.com/file/o87frh899ruh4m4/DARK_SHOP.rar/file"
-            },
-            { 
-                name: "SHOP_ID_2 (ตัวเกมแรร์ล่าสุด)", 
-                icon: SHOP_LOGO_HTML, 
-                tier: "tier-legendary", 
-                weight: 0.2, 
-                downloadUrl: "https://www.mediafire.com/file/rkozxxsl3brwixr/SHOP_ID_2.zip/file"
+                downloadUrl: "https://sharemods.com/y1vw6i82arry/R3XRoom.rar.html"
             },
             { 
                 name: "เกลือป่น (เสียใจด้วยนะ)", 
@@ -1143,7 +1131,6 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             startCloudflareVerification();
-            buildGachaCarouselTray();
         });
 
         function startCloudflareVerification() {
@@ -1263,6 +1250,9 @@
                 document.getElementById('user-display').innerText = `ผู้เล่น: ${userData.username}`;
                 updatePointsUI();
                 loadUserHistory();
+                
+                // ดึงข้อมูลตรวจสอบสินค้าลิมิเต็ดก่อนเข้าหน้าสุ่ม
+                await checkGachaItemAvailability();
 
                 document.getElementById('auth-section').style.display = 'none';
                 document.getElementById('shop-page').style.display = 'flex';
@@ -1271,7 +1261,7 @@
             }
         }
 
-        window.togglePages = function(pageName) {
+        window.togglePages = async function(pageName) {
             const pages = ['shop', 'gacha', 'wallet', 'redeem', 'profile', 'admin'];
             pages.forEach(p => {
                 const el = document.getElementById(`page-${p}-view`);
@@ -1288,8 +1278,49 @@
             if(pageName === 'admin') loadAdminDashboard();
             if(pageName === 'profile') loadUserHistory();
             if(pageName === 'gacha') {
+                // โหลดความสดใหม่จากเซิฟเวอร์เพื่อเช็คว่า R3XRoom โดนสุ่มไปหรือยัง ณ วินาทีนั้น
+                await checkGachaItemAvailability();
                 setGachaLuck(0); 
                 resetGachaTrayPosition();
+            }
+        }
+
+        // 🛑 ฟังก์ชันตรวจสอบ Real-time สิทธิ์สินค้าลิมิเต็ด (เช็คว่ามีคนสุ่มได้ R3XRoom ไปหรือยัง)
+        async function checkGachaItemAvailability() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "transactions"));
+                let alreadyWon = false;
+
+                querySnapshot.forEach((doc) => {
+                    const trans = doc.data();
+                    // ตรวจสอบจากประวัติถ้ามีคีย์คำว่า R3XRoom (ตัวเกมแรร์) แปลว่าออกไปแล้ว
+                    if(trans.type && trans.type.includes("R3XRoom (ตัวเกมแรร์)")) {
+                        alreadyWon = true;
+                    }
+                });
+
+                const statusBox = document.getElementById('gacha-status-container');
+
+                if (alreadyWon) {
+                    // กรองเอา R3XRoom ออกไปจากตารางสุ่มถาวร เหลือแค่พวกเกลือ
+                    GACHA_ITEMS = GACHA_ITEMS.filter(item => item.name !== "R3XRoom (ตัวเกมแรร์)");
+                    if(statusBox) statusBox.style.display = 'block';
+                } else {
+                    // หากยังไม่มีคนได้ ตรวจสอบว่ายังมีตัวเกมแรร์อยู่ในลิสต์ไหม ถ้าไม่มีให้ใส่กลับเข้าไป
+                    const hasRare = GACHA_ITEMS.some(item => item.name === "R3XRoom (ตัวเกมแรร์)");
+                    if (!hasRare) {
+                        GACHA_ITEMS.unshift({ 
+                            name: "R3XRoom (ตัวเกมแรร์)", 
+                            icon: SHOP_LOGO_HTML, 
+                            tier: "tier-legendary", 
+                            weight: 0.2, 
+                            downloadUrl: "https://sharemods.com/y1vw6i82arry/R3XRoom.rar.html"
+                        });
+                    }
+                    if(statusBox) statusBox.style.display = 'none';
+                }
+            } catch (error) {
+                console.error("เกิดข้อผิดพลาดในการตรวจสอบสถานะไอเทมกล่องสุ่ม:", error);
             }
         }
 
@@ -1371,7 +1402,7 @@
                 if (randomNum < item.finalWeight) return item; 
                 randomNum -= item.finalWeight;
             }
-            return GACHA_ITEMS[5]; 
+            return GACHA_ITEMS[0]; 
         }
 
         function resetGachaTrayPosition() {
@@ -1386,6 +1417,10 @@
 
         window.rollGachaCarousel = async function() {
             if(!currentUserDoc) return;
+            
+            // เช็คความสดใหม่อีกครั้งกันผู้เล่นเปิดหน้าเว็บค้างไว้ แล้วกดสุ่มหลังจากตัวเกมออกไปแล้ว
+            await checkGachaItemAvailability();
+
             if(GACHA_ITEMS.length === 0) {
                 alert('ไม่สามารถสุ่มได้ในขณะนี้');
                 return;
@@ -1452,6 +1487,8 @@
                     if(isWinRare) {
                         if(pIcon) pIcon.innerHTML = finalWinningItem.icon;
                         if(pTitle) pTitle.innerText = `💥 สุ่มได้ของระดับ LEGENDARY!`;
+                        // รีเฟรชสถานะทันทีหลังจากกดตกลงเพื่อให้ตัวเกมหายวับไปจากหน้าสุ่มหน้าเว็บ
+                        await checkGachaItemAvailability();
                     } else {
                         if(pIcon) pIcon.innerHTML = `<div class="gacha-icon-text">🛍️</div>`;
                         if(pTitle) pTitle.innerText = `เกลือเข้าตาคุณแล้ว!`;
@@ -1678,19 +1715,17 @@
             }
         }
 
-        // --- แก้ไขในฟังก์ชันนี้เพื่อให้สิทธิ์รับ 30 พอยท์ ---
         window.processRedeemCode = async function() {
             const code = document.getElementById('coupon-code-input').value.trim().toUpperCase();
             if(code === "DEX ZONE") {
                 try {
                     const userRef = doc(db, "users", currentUserDoc.refName);
-                    const newPoints = currentUserDoc.points + 30; // ปรับเปลี่ยนจาก 50 เป็น 30 พอยท์ตามอัปเดต
+                    const newPoints = currentUserDoc.points + 30; 
 
                     await updateDoc(userRef, { points: newPoints });
                     currentUserDoc.points = newPoints;
                     updatePointsUI();
 
-                    // บันทึกธุรกรรมของโค้ดรางวัลลงใน Firebase
                     const orderID = generateOrderID();
                     const timestamp = getCurrentDateTime();
                     await addDoc(collection(db, "transactions"), {
@@ -1825,9 +1860,12 @@
             }
         }
 
-        window.closeSuccessPopup = function() {
+        window.closeSuccessPopup = async function() {
             const successPopup = document.getElementById('successPopup');
             if(successPopup) successPopup.classList.remove('active');
+            
+            // รีเช็คสถานะความสดใหม่อีกครั้งเผื่อของพึ่งออกไปหยกๆ เพื่อรีเซ็ตกระดานสไลด์ให้ไร้ตัวเกมแรร์ทันที
+            await checkGachaItemAvailability();
             resetGachaTrayPosition();
         }
 
