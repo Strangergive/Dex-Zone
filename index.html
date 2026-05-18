@@ -463,6 +463,32 @@
             line-height: 1.5;
         }
 
+        .discord-link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 15px;
+            background: #5865F2;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+        }
+
+        .discord-link-btn:hover {
+            background: #4752c4;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.5);
+        }
+
         .redeem-input-wrapper input {
             width: 100%;
             padding: 14px;
@@ -479,26 +505,6 @@
             border-color: #f38020;
             box-shadow: 0 0 12px rgba(243, 128, 32, 0.2);
             outline: none;
-        }
-
-        .auto-status-box {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        .cf-loading-dots {
-            width: 24px;
-            height: 24px;
-            border: 3px dashed #22c55e;
-            border-radius: 50%;
-            animation: cf-spin 1.5s linear infinite;
         }
 
         @keyframes cf-spin {
@@ -535,30 +541,6 @@
             justify-content: center;
             gap: 12px;
             margin: 15px 0;
-        }
-
-        .luck-btn {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #aaa;
-            padding: 10px 24px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .luck-btn:hover {
-            border-color: #f38020;
-            color: #fff;
-        }
-
-        .luck-btn.active {
-            background: #f38020 !important;
-            border-color: #f38020 !important;
-            color: #fff !important;
-            box-shadow: 0 0 12px rgba(243, 128, 32, 0.4);
         }
 
         .gacha-carousel-outer {
@@ -657,7 +639,7 @@
         }
 
         .admin-card.total { border-left-color: #22c55e; }
-        .admin-card.wallet { border-left-color: #f38020; }
+        .admin-card.wallet { border-left-color: #5865F2; }
         .admin-card.points { border-left-color: #3b82f6; }
 
         .admin-card-title {
@@ -890,8 +872,8 @@
             
             <div class="nav-menu">
                 <button class="nav-menu-btn active" id="menu-shop-btn" onclick="togglePages('shop')">🛒 ร้านค้าไอเทม</button>
-                <button class="nav-menu-btn" id="menu-gacha-btn" onclick="togglePages('gacha')">🎁 สุ่มกล่อง GTA SAMP</button>
-                <button class="nav-menu-btn" id="menu-wallet-btn" onclick="togglePages('wallet')">🧡 เติมเงินวоเล็ต</button>
+                <button class="nav-menu-btn" id="menu-gacha-btn" onclick="togglePages('gacha')">🎁 สุ่มกล่อง 5P</button>
+                <button class="nav-menu-btn" id="menu-wallet-btn" onclick="togglePages('wallet')">💬 เติมเงินผ่านดิสคอร์ด</button>
                 <button class="nav-menu-btn" id="menu-redeem-btn" onclick="togglePages('redeem')">🎁 กรอกโค้ดรับรางวัล</button>
                 <button class="nav-menu-btn" id="menu-profile-btn" onclick="togglePages('profile')">⚙️ ตั้งค่า & ประวัติ</button>
                 <button class="nav-menu-btn admin-btn" id="menu-admin-btn" onclick="togglePages('admin')" style="display: none;">👑 กระดานรับเงิน</button>
@@ -945,48 +927,35 @@
         </div>
 
         <div class="shop-content" id="page-gacha-view" style="display: none;">
-            <div class="shop-title">กล่องสุ่มตัวเกมและไอเทม GTA SAN SAMP</div>
+            <div class="shop-title">กล่องสุ่มตัวเกมและไอเทม GTA SAN SAMP (ครั้งละ 5 พอยท์)</div>
             <div class="gacha-wrapper">
                 <h3 style="font-size: 22px; margin-bottom: 6px; color: #fff;">📦 กล่องซิ่ง SAMP ลุ้นตัวเกมแรร์มหาโหด</h3>
-                <p style="color: #aaa; font-size: 14px; margin-bottom: 15px;">เลือกอัตราเพิ่มโชคเพื่อช่วยเพิ่มโอกาสดรอปตัวเกมในฝันของคุณ!</p>
+                <p style="color: #aaa; font-size: 14px; margin-bottom: 15px;">ค่าบริการเปิดสุ่มครั้งละ 5 พอยท์ภายในไอดี</p>
                 
                 <div id="gacha-status-container" style="display: none; margin-bottom: 15px;">
                     <span class="gacha-status-indicator" id="gacha-limit-status">🔒 ตัวเกมแรร์ชิ้นสุดท้ายถูกสุ่มไปแล้ว! ในกล่องจะเหลือเพียงรางวัลปลอบใจ</span>
                 </div>
 
-                <div class="luck-selector-container">
-                    <button class="luck-btn active" id="luck-p0" onclick="setGachaLuck(0)">🍀 เพิ่มโชค 0% (ใช้ 1P)</button>
-                    <button class="luck-btn" id="luck-p13" onclick="setGachaLuck(1.3)">🔥 เพิ่มโชค 1.3% (ใช้ 5P)</button>
-                    <button class="luck-btn" id="luck-p15" onclick="setGachaLuck(1.5)">⚡ เพิ่มโชค 1.5% (ใช้ 15P)</button>
-                </div>
-
                 <div class="gacha-carousel-outer">
                     <div class="gacha-marker"></div>
                     <div class="gacha-carousel-inner" id="gacha-tray">
-                        </div>
+                    </div>
                 </div>
 
-                <button class="btn" id="gacha-roll-btn" style="background: #f38020; color: #fff; max-width: 280px; margin: 0 auto; display: block;" onclick="rollGachaCarousel()">เปิดกล่องสุ่มรางวัล</button>
+                <button class="btn" id="gacha-roll-btn" style="background: #f38020; color: #fff; max-width: 280px; margin: 0 auto; display: block;" onclick="rollGachaCarousel()">สุ่มกล่อง 5 พอยท์</button>
             </div>
         </div>
 
         <div class="shop-content" id="page-wallet-view" style="display: none;">
-            <div class="shop-title">ระบบเติมเงินอัตโนมัติ (TrueMoney Wallet)</div>
+            <div class="shop-title">ระบบเติมเงินเข้าสู่บัญชีร้านค้า</div>
             <div class="redeem-container">
-                <div class="redeem-icon" style="color: #f38020;">🧡</div>
-                <h3>TRUE WALLET AUTO</h3>
-                <p>สร้างซองของขวัญ TrueMoney Wallet แล้วนำลิงก์ซองมาวางที่ช่องด้านล่างเพื่อตรวจสอบแบบออโต้ทันที</p>
+                <div class="redeem-icon" style="color: #5865F2;">💬</div>
+                <h3>CONTACT DISCORD TO RECHARGE</h3>
+                <p>กดปุ่มเชื่อมต่อด้านล่างเพื่อเข้าสู่เซิร์ฟเวอร์ดิสคอร์ดหลัก แจ้งแอดมินหรือส่งซองของขวัญทางห้องแชทเพื่อรับคะแนนพอยท์เข้าระบบร้านค้าได้ทันที!</p>
                 
-                <div class="redeem-input-wrapper">
-                    <input type="text" id="wallet-link-input" placeholder="https://gift.truemoney.com/campaign/?v=...">
-                </div>
-
-                <div class="auto-status-box" id="wallet-status-box" style="display: none;">
-                    <div class="cf-loading-dots"></div>
-                    <span style="font-size: 15px; font-weight: 600;">กำลังตรวจสอบซองเงิน...</span>
-                </div>
-
-                <button class="btn" id="wallet-submit-btn" style="background: #f38020; color: #fff;" onclick="processWalletAuto()">ตรวจสอบและรับเงิน</button>
+                <a href="https://discord.gg/9WGcmYxWaR" target="_blank" class="discord-link-btn">
+                    <span>🔗 เข้าร่วมดิสคอร์ดเพื่อเติมเงิน</span>
+                </a>
             </div>
         </div>
 
@@ -1048,8 +1017,8 @@
                     <div class="admin-card-value"><span id="admin-total-revenue">0</span> THB</div>
                 </div>
                 <div class="admin-card wallet">
-                    <div class="admin-card-title">🧡 ยอดเติมผ่านซองวอเล็ต</div>
-                    <div class="admin-card-value"><span id="admin-wallet-revenue">0</span> THB</div>
+                    <div class="admin-card-title">💬 ช่องทางหลัก</div>
+                    <div class="admin-card-value" style="font-size: 18px; color: #5865F2;">เติมตรงผ่าน Discord</div>
                 </div>
                 <div class="admin-card points">
                     <div class="admin-card-title">🛒 มูลค่าไอเทมที่จำหน่ายได้</div>
@@ -1127,7 +1096,7 @@
         const db = getFirestore(app);
 
         let currentUserDoc = null;
-        const ADMIN_DISCORD_IDS = ["1332269878006255666", "1310176875821404210", ""];
+        const ADMIN_DISCORD_IDS = ["1332269878006255666", "1362459589508858129", "1399090497829605457", "1310176875821404210"];
 
         const SHOP_LOGO_HTML = `<div style="display: flex; align-items: center; justify-content: center; position: relative; width: 45px; height: 45px;">
             <img src="https://img1.pic.in.th/images/Beige_Black_Minimal_Simple_Modern_Handwritten_Graffiti_Typographic_Arts_and_20260410_052014_0000.png" style="width: 100%; height: 100%; border-radius: 6px; object-fit: cover;">
@@ -1161,7 +1130,6 @@
             }
         ];
 
-        let selectedLuckPercent = 0; 
         let generatedTrayItems = [];
         const NODE_WIDTH = 142; 
 
@@ -1316,7 +1284,6 @@
             if(pageName === 'shop') await checkLimitedStoreStocks();
             if(pageName === 'gacha') {
                 await checkGachaItemAvailability();
-                setGachaLuck(0); 
                 resetGachaTrayPosition();
             }
         }
@@ -1411,17 +1378,6 @@
             return `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()+543} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
         }
 
-        window.setGachaLuck = function(percent) {
-            selectedLuckPercent = percent;
-            
-            document.querySelectorAll('.luck-btn').forEach(btn => btn.classList.remove('active'));
-            if(percent === 0) document.getElementById('luck-p0').classList.add('active');
-            if(percent === 1.3) document.getElementById('luck-p13').classList.add('active');
-            if(percent === 1.5) document.getElementById('luck-p15').classList.add('active');
-
-            resetGachaTrayPosition();
-        }
-
         function buildGachaCarouselTray() {
             const tray = document.getElementById('gacha-tray');
             if(!tray) return;
@@ -1454,17 +1410,6 @@
             let totalWeight = 0;
             const dynamicItems = GACHA_ITEMS.map(item => {
                 let finalWeight = item.weight || 10;
-                
-                if (item.tier === 'tier-legendary') {
-                    if (selectedLuckPercent === 0) {
-                        finalWeight = item.weight; 
-                    } else if (selectedLuckPercent === 1.3) {
-                        finalWeight = item.weight * 1.13; 
-                    } else if (selectedLuckPercent === 1.5) {
-                        finalWeight = item.weight * 1.15; 
-                    }
-                }
-                
                 totalWeight += finalWeight;
                 return { ...item, finalWeight };
             });
@@ -1490,19 +1435,16 @@
         window.rollGachaCarousel = async function() {
             if(!currentUserDoc) return;
             
+            const cost = 5; 
+            if(currentUserDoc.points < cost) {
+                alert(`พอยท์ของคุณไม่เพียงพอสำหรับการสุ่มกล่องนี้! (ต้องการ ${cost} Points)`);
+                return;
+            }
+
             await checkGachaItemAvailability();
 
             if(GACHA_ITEMS.length === 0) {
                 alert('ไม่สามารถสุ่มได้ในขณะนี้');
-                return;
-            }
-
-            let cost = 1;
-            if (selectedLuckPercent === 1.3) cost = 5;
-            if (selectedLuckPercent === 1.5) cost = 15;
-
-            if(currentUserDoc.points < cost) {
-                alert(`พอยท์ของคุณไม่เพียงพอสำหรับการสุ่มครับ! (ต้องการ ${cost} Points)`);
                 return;
             }
 
@@ -1511,9 +1453,10 @@
 
             try {
                 const userRef = doc(db, "users", currentUserDoc.refName);
-                const deductedPoints = currentUserDoc.points - cost;
-                await updateDoc(userRef, { points: deductedPoints });
-                currentUserDoc.points = deductedPoints;
+                const newPoints = currentUserDoc.points - cost;
+                await updateDoc(userRef, { points: newPoints });
+
+                currentUserDoc.points = newPoints;
                 updatePointsUI();
 
                 const tray = document.getElementById('gacha-tray');
@@ -1530,7 +1473,7 @@
                     const orderID = generateOrderID();
                     const timestamp = getCurrentDateTime();
 
-                    let logType = `สุ่มกล่อง SAMP ได้รับ [${finalWinningItem.name}]`;
+                    let logType = `สุ่มกล่อง SAMP (หัก 5P) ได้รับ [${finalWinningItem.name}]`;
                     let winMessage = `คุณได้รับ: ${finalWinningItem.name}`;
                     let isWinRare = false;
                     
@@ -1546,8 +1489,8 @@
                         orderId: orderID,
                         username: currentUserDoc.username,
                         type: logType,
-                        value: 0,
-                        pointsChange: -cost,
+                        value: cost,
+                        pointsChange: -cost, 
                         time: timestamp,
                         rawTime: Date.now()
                     });
@@ -1700,56 +1643,6 @@
             }
         }
 
-        window.processWalletAuto = async function() {
-            const walletLink = document.getElementById('wallet-link-input').value.trim();
-            
-            if (!walletLink || !walletLink.startsWith('https://gift.truemoney.com/campaign/?v=')) {
-                alert('❌ รูปแบบลิงก์ซองของขวัญไม่ถูกต้อง');
-                return;
-            }
-
-            document.getElementById('wallet-submit-btn').disabled = true;
-            const statusBox = document.getElementById('wallet-status-box');
-            if(statusBox) statusBox.style.display = 'flex';
-
-            setTimeout(async () => {
-                const amounts = [50, 100, 150, 300, 500];
-                const moneyReceived = amounts[Math.floor(Math.random() * amounts.length)];
-                const calculatedPoints = moneyReceived * 100;
-
-                try {
-                    const userRef = doc(db, "users", currentUserDoc.refName);
-                    const newPoints = currentUserDoc.points + calculatedPoints;
-                    
-                    await updateDoc(userRef, { points: newPoints });
-                    currentUserDoc.points = newPoints;
-                    updatePointsUI();
-
-                    const orderID = generateOrderID();
-                    const timestamp = getCurrentDateTime();
-
-                    await addDoc(collection(db, "transactions"), {
-                        orderId: orderID,
-                        username: currentUserDoc.username,
-                        type: "เติมเงินซอง (Auto)",
-                        value: moneyReceived,
-                        pointsChange: calculatedPoints,
-                        time: timestamp,
-                        rawTime: Date.now()
-                    });
-
-                    document.getElementById('popupIcon').innerHTML = `<div class="gacha-icon-text">🧡</div>`;
-                    document.getElementById('popupTitle').innerText = "เติมเงินสำเร็จ";
-                    openSuccessPopup(`เติมเงินเข้าบัญชีเรียบร้อย: +${calculatedPoints.toLocaleString()} Points`);
-                    document.getElementById('wallet-link-input').value = "";
-                    if(statusBox) statusBox.style.display = 'none';
-                    document.getElementById('wallet-submit-btn').disabled = false;
-                } catch (error) {
-                    alert("เกิดข้อผิดพลาดในการบันทึกข้อมูลเติมเงิน: " + error.message);
-                }
-            }, 1200);
-        }
-
         window.buyItem = async function(itemName, itemPrice) {
             if (itemName === "ตัวเกมลื่น GTA SAN SAMP") {
                 await checkLimitedStoreStocks();
@@ -1776,7 +1669,6 @@
                 const orderID = generateOrderID();
                 const timestamp = getCurrentDateTime();
 
-                // 📥 ผูกลิงก์ดาวน์โหลดตัวเกมลื่น white-swag.rar เข้าไปใน Log Transactions ทันทีเมื่อซื้อสำเร็จ
                 let transactionType = `ซื้อสินค้า (${itemName})`;
                 if (itemName === "ตัวเกมลื่น GTA SAN SAMP") {
                     transactionType += `_DL:https://sharemods.com/19kdumismjmb/white-swag.rar.html`;
@@ -1863,7 +1755,6 @@
                     const isPlus = trans.pointsChange > 0;
                     let displayType = trans.type;
                     
-                    // 🔍 ตรวจสอบหากมีสัญญลักษณ์ฝังลิงก์ดาวน์โหลด (_DL:) ให้สปลิตออกและทำปุ่มดาวน์โหลดตัวเกมให้ผู้เล่นกด
                     if (trans.type && trans.type.includes("_DL:")) {
                         const parts = trans.type.split("_DL:");
                         displayType = parts[0] + ` <br><a href="${parts[1]}" target="_blank" class="download-link-btn" style="margin-top: 5px; font-size:12px; padding: 4px 10px;">📥 คลิกดาวน์โหลดตัวเกมลื่น</a>`;
@@ -1873,7 +1764,7 @@
                         <tr>
                             <td><code>${trans.orderId || '-'}</code></td>
                             <td>${displayType}</td>
-                            <td style="color: ${isPlus ? '#22c55e' : '#ef4444'}; font-weight: bold;">
+                            <td style="color: ${isPlus ? '#22c55e' : (trans.pointsChange === 0 ? '#aaa' : '#ef4444')}; font-weight: bold;">
                                 ${isPlus ? '+' : ''}${trans.pointsChange.toLocaleString()} P
                             </td>
                             <td>${trans.time}</td>
@@ -1902,15 +1793,15 @@
                 arr.sort((a, b) => (b.rawTime || 0) - (a.rawTime || 0));
 
                 let totalRevenue = 0;
-                let walletRevenue = 0;
                 let pointsSpent = 0;
                 let logHtml = "";
 
                 arr.forEach((trans) => {
-                    if(trans.type && trans.type.includes("เติมเงินซอง")) {
-                        walletRevenue += (trans.value || 0);
-                        totalRevenue += (trans.value || 0);
-                    } else if(trans.type && trans.type.includes("ซื้อสินค้า")) {
+                    if(trans.type && trans.type.includes("แอดมินปรับแต่งแต้ม")) {
+                        if (trans.pointsChange > 0) {
+                            totalRevenue += (trans.value || 0);
+                        }
+                    } else if(trans.type && trans.type.includes("ซื้อสินค้า") || trans.type.includes("สุ่มกล่อง SAMP")) {
                         pointsSpent += Math.abs(trans.pointsChange || 0);
                     }
 
@@ -1925,8 +1816,8 @@
                             <td><code>${trans.orderId || '-'}</code></td>
                             <td style="color: #ec4899; font-weight: bold;">${trans.username || '-'}</td>
                             <td>${displayAdminType}</td>
-                            <td style="color: ${isPlus ? '#22c55e' : '#ef4444'}; font-weight: bold;">
-                                ${isPlus ? '+' : '-'}${Math.abs(trans.value || 0).toLocaleString()} ${trans.type && (trans.type.includes("เติมเงิน") || trans.type.includes("ปรับแต่งแต้ม") || trans.type.includes("รหัสโค้ดรางวัล")) && !trans.type.includes("ซื้อสินค้า") ? 'THB/P' : 'P'}
+                            <td style="color: ${isPlus ? '#22c55e' : (trans.pointsChange === 0 ? '#aaa' : '#ef4444')}; font-weight: bold;">
+                                ${isPlus ? '+' : ''}${trans.pointsChange.toLocaleString()} P
                             </td>
                             <td>${trans.time || '-'}</td>
                         </tr>
@@ -1934,7 +1825,6 @@
                 });
 
                 document.getElementById('admin-total-revenue').innerText = totalRevenue.toLocaleString();
-                document.getElementById('admin-wallet-revenue').innerText = walletRevenue.toLocaleString();
                 document.getElementById('admin-points-spent').innerText = pointsSpent.toLocaleString();
                 document.getElementById('admin-log-table').innerHTML = logHtml || `<tr><td colspan="5" style="text-align:center; color:#888;">ยังไม่มีข้อมูลธุรกรรมในระบบ</td></tr>`;
 
