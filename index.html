@@ -536,13 +536,6 @@
             display: inline-block;
         }
 
-        .luck-selector-container {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin: 15px 0;
-        }
-
         .gacha-carousel-outer {
             position: relative;
             width: 100%;
@@ -1134,8 +1127,75 @@
         const NODE_WIDTH = 142; 
 
         window.addEventListener('DOMContentLoaded', () => {
-            startCloudflareVerification();
+            // เรียกฟังก์ชันตรวจสอบ Session การเข้าสู่ระบบค้างออโต้ทันทีเมื่อโหลดหน้าเว็บ
+            checkAutoLoginSession();
         });
+
+        // 🌟 ฟังก์ชันเพิ่มระบบ ตรวจสอบการเข้าสู่ระบบค้างแบบออโต้ (1 ชั่วโมง)
+        async function checkAutoLoginSession() {
+            const sessionDataStr = localStorage.getItem("dex_zone_session");
+            if (!sessionDataStr) {
+                startCloudflareVerification();
+                return;
+            }
+
+            try {
+                const session = JSON.parse(sessionDataStr);
+                const now = Date.now();
+                const oneHour = 60 * 60 * 1000; // 1 ชั่วโมงในหน่วยมิลลิวินาที
+
+                // ถ้าเวลาปัจจุบัน เกินกว่า เวลาล็อกอิน + 1 ชั่วโมง ให้เตะออกระบบ
+                if (now - session.loginTime > oneHour) {
+                    localStorage.removeItem("dex_zone_session");
+                    alert("⏰ เซสชันการใช้งานของคุณหมดอายุแล้ว (ครบ 1 ชั่วโมง) กรุณาเข้าสู่ระบบใหม่อีกครั้งครับ");
+                    startCloudflareVerification();
+                    return;
+                }
+
+                // หากยังไม่ครบ 1 ชั่วโมง ให้ทำการดึงข้อมูลเข้าสู่ระบบออโต้ทันที
+                const userRef = doc(db, "users", session.refName);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    
+                    if (userData.isBanned === true) {
+                        localStorage.removeItem("dex_zone_session");
+                        alert('ขออภัย บัญชีผู้ใช้งานนี้ถูกระงับการใช้งานถาวรโดยผู้ดูแลระบบ!');
+                        startCloudflareVerification();
+                        return;
+                    }
+
+                    currentUserDoc = userData;
+                    currentUserDoc.refName = session.refName;
+
+                    // เปิดหน้าเมนูแอดมินให้ถ้ามีสิทธิ์
+                    if(ADMIN_DISCORD_IDS.includes(userData.discordId) || userData.role === "admin") {
+                        document.getElementById('menu-admin-btn').style.display = 'block';
+                        loadAdminDashboard();
+                    } else {
+                        document.getElementById('menu-admin-btn').style.display = 'none';
+                    }
+
+                    document.getElementById('user-display').innerText = `ผู้เล่น: ${userData.username}`;
+                    updatePointsUI();
+                    loadUserHistory();
+                    
+                    await checkLimitedStoreStocks();
+                    await checkGachaItemAvailability();
+
+                    // ข้ามหน้าโหลดและ Login เข้าไปหน้าหลักทันที
+                    document.getElementById('auth-section').style.display = 'none';
+                    document.getElementById('shop-page').style.display = 'flex';
+                } else {
+                    localStorage.removeItem("dex_zone_session");
+                    startCloudflareVerification();
+                }
+            } catch (e) {
+                localStorage.removeItem("dex_zone_session");
+                startCloudflareVerification();
+            }
+        }
 
         function startCloudflareVerification() {
             const cfBox = document.getElementById('cf-box');
@@ -1244,6 +1304,13 @@
                 currentUserDoc = userData;
                 currentUserDoc.refName = user.toLowerCase();
 
+                // 🌟 บันทึก Session ข้อมูลล็อกอินลงในเครื่อง พร้อมบันทึกเวลาล็อกอิน ณ ปัจจุบัน
+                const sessionData = {
+                    refName: user.toLowerCase(),
+                    loginTime: Date.now()
+                };
+                localStorage.setItem("dex_zone_session", JSON.stringify(sessionData));
+
                 if(ADMIN_DISCORD_IDS.includes(userData.discordId) || userData.role === "admin") {
                     document.getElementById('menu-admin-btn').style.display = 'block';
                     loadAdminDashboard();
@@ -1266,6 +1333,17 @@
         }
 
         window.togglePages = async function(pageName) {
+            // ทุกครั้งที่มีการคลิกสลับหน้าเว็บ ให้แอบเช็คตรวจสอบว่าเซสชันหมดเวลา 1 ชั่วโมงหรือยัง
+            const sessionDataStr = localStorage.getItem("dex_zone_session");
+            if (sessionDataStr) {
+                const session = JSON.parse(sessionDataStr);
+                if (Date.now() - session.loginTime > 60 * 60 * 1000) {
+                    logout();
+                    alert("⏰ เซสชันการใช้งานของคุณหมดอายุแล้ว (ครบ 1 ชั่วโมง) ระบบทำการดีดออกอัตโนมัติเพื่อความปลอดภัยครับ");
+                    return;
+                }
+            }
+
             const pages = ['shop', 'gacha', 'wallet', 'redeem', 'profile', 'admin'];
             pages.forEach(p => {
                 const el = document.getElementById(`page-${p}-view`);
@@ -1851,6 +1929,8 @@
         }
 
         window.logout = function() {
+            // ล้างค่าข้อมูล Session ออกจากตัวเครื่องคอมพิวเตอร์ของผู้ใช้ทันทีเมื่อกดออกจากระบบ
+            localStorage.removeItem("dex_zone_session");
             document.getElementById('login-user').value = "";
             document.getElementById('login-pass').value = "";
             document.getElementById('shop-page').style.display = 'none';
