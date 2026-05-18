@@ -417,6 +417,24 @@
             color: #000000;
         }
 
+        .buy-btn:disabled {
+            background: #222 !important;
+            border-color: #444 !important;
+            color: #777 !important;
+            cursor: not-allowed;
+        }
+
+        .limited-tag {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            align-self: flex-start;
+        }
+
         .redeem-container {
             max-width: 500px;
             margin: 40px auto;
@@ -889,6 +907,7 @@
         <div class="shop-content" id="page-shop-view">
             <div class="shop-title">สินค้าและไอเทมแนะนำ</div>
             <div class="item-grid">
+                
                 <div class="item-card">
                     <div class="item-image">
                         <img src="https://img1.pic.in.th/images/image_ea062d.png" alt="Dex Zone VIP Dashboard Banner" onerror="this.src='https://img1.pic.in.th/images/Beige_Black_Minimal_Simple_Modern_Handwritten_Graffiti_Typographic_Arts_and_20260410_052014_0000.png';">
@@ -904,6 +923,24 @@
                         <button class="buy-btn" onclick="buyItem('VIP ถาวร', 59)">ซื้อสินค้า</button>
                     </div>
                 </div>
+
+                <div class="item-card">
+                    <div class="item-image">
+                        <img src="https://media.discordapp.net/attachments/1332271496877314071/1506027597211893860/image.png?ex=6a0cc4ff&is=6a0b737f&hm=4126c74f229c1d8df3bda8c2871a5e3ece3372f0352f2dee9508af4429fe521b&=&format=webp&quality=lossless&width=550&height=309" alt="GTA SAN SAMP Smooth Game Version Banner" onerror="this.src='https://img1.pic.in.th/images/Beige_Black_Minimal_Simple_Modern_Handwritten_Graffiti_Typographic_Arts_and_20260410_052014_0000.png';">
+                    </div>
+                    <div class="item-details">
+                        <div class="limited-tag" id="game-stock-badge">📦 เหลือโควตา: สลอตว่าง 5 / 5 คน</div>
+                        <div class="item-name" style="margin-top: 5px;">ตัวเกมลื่น GTA SAN SAMP</div>
+                        <div class="item-desc">ตัวเกมปรับแต่งมาพิเศษเพื่อความลื่นไหล บูส FPS สูงสุด ลดอาการกระตุกรบกวนเวลาเล่นเกมอย่างเห็นได้ชัด!</div>
+                        
+                        <div class="item-price-container">
+                            <span class="price-original">120 Points</span>
+                            <span class="price-sale">50 Points</span>
+                        </div>
+                        <button class="buy-btn" id="buy-smooth-game-btn" onclick="buyItem('ตัวเกมลื่น GTA SAN SAMP', 50)">ซื้อสินค้า</button>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -1096,7 +1133,6 @@
             <img src="https://img1.pic.in.th/images/Beige_Black_Minimal_Simple_Modern_Handwritten_Graffiti_Typographic_Arts_and_20260410_052014_0000.png" style="width: 100%; height: 100%; border-radius: 6px; object-fit: cover;">
         </div>`;
 
-        // ลิสต์ไอเทมเริ่มต้นเริ่มต้น (ตัวเกมแรร์จะมีโอกาสสุ่มได้ตราบใดที่ยังไม่มีใครได้ไป)
         let GACHA_ITEMS = [
             { 
                 name: "R3XRoom (ตัวเกมแรร์)", 
@@ -1251,7 +1287,7 @@
                 updatePointsUI();
                 loadUserHistory();
                 
-                // ดึงข้อมูลตรวจสอบสินค้าลิมิเต็ดก่อนเข้าหน้าสุ่ม
+                await checkLimitedStoreStocks();
                 await checkGachaItemAvailability();
 
                 document.getElementById('auth-section').style.display = 'none';
@@ -1277,15 +1313,54 @@
 
             if(pageName === 'admin') loadAdminDashboard();
             if(pageName === 'profile') loadUserHistory();
+            if(pageName === 'shop') await checkLimitedStoreStocks();
             if(pageName === 'gacha') {
-                // โหลดความสดใหม่จากเซิฟเวอร์เพื่อเช็คว่า R3XRoom โดนสุ่มไปหรือยัง ณ วินาทีนั้น
                 await checkGachaItemAvailability();
                 setGachaLuck(0); 
                 resetGachaTrayPosition();
             }
         }
 
-        // 🛑 ฟังก์ชันตรวจสอบ Real-time สิทธิ์สินค้าลิมิเต็ด (เช็คว่ามีคนสุ่มได้ R3XRoom ไปหรือยัง)
+        async function checkLimitedStoreStocks() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "transactions"));
+                let gameSalesCount = 0;
+
+                querySnapshot.forEach((doc) => {
+                    const trans = doc.data();
+                    if(trans.type && trans.type.includes("ซื้อสินค้า (ตัวเกมลื่น GTA SAN SAMP)")) {
+                        gameSalesCount++;
+                    }
+                });
+
+                const remainingSlots = 5 - gameSalesCount;
+                const badge = document.getElementById('game-stock-badge');
+                const buyBtn = document.getElementById('buy-smooth-game-btn');
+
+                if (badge) {
+                    if (remainingSlots <= 0) {
+                        badge.innerText = `❌ โควตาเต็ม: หมดเกลี้ยงแล้ว`;
+                        badge.style.background = "rgba(239, 68, 68, 0.2)";
+                        if(buyBtn) {
+                            buyBtn.innerText = "❌ สินค้าหมดชั่วคราว";
+                            buyBtn.disabled = true;
+                        }
+                    } else {
+                        badge.innerText = `📦 เหลือโควตา: สลอตว่าง ${remainingSlots} / 5 คน`;
+                        badge.style.background = "rgba(34, 197, 94, 0.15)";
+                        badge.style.color = "#22c55e";
+                        badge.style.borderColor = "#22c55e";
+                        if(buyBtn) {
+                            buyBtn.innerText = "ซื้อสินค้า";
+                            buyBtn.disabled = false;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Stock check error:", error);
+            }
+        }
+
         async function checkGachaItemAvailability() {
             try {
                 const querySnapshot = await getDocs(collection(db, "transactions"));
@@ -1293,7 +1368,6 @@
 
                 querySnapshot.forEach((doc) => {
                     const trans = doc.data();
-                    // ตรวจสอบจากประวัติถ้ามีคีย์คำว่า R3XRoom (ตัวเกมแรร์) แปลว่าออกไปแล้ว
                     if(trans.type && trans.type.includes("R3XRoom (ตัวเกมแรร์)")) {
                         alreadyWon = true;
                     }
@@ -1302,11 +1376,9 @@
                 const statusBox = document.getElementById('gacha-status-container');
 
                 if (alreadyWon) {
-                    // กรองเอา R3XRoom ออกไปจากตารางสุ่มถาวร เหลือแค่พวกเกลือ
                     GACHA_ITEMS = GACHA_ITEMS.filter(item => item.name !== "R3XRoom (ตัวเกมแรร์)");
                     if(statusBox) statusBox.style.display = 'block';
                 } else {
-                    // หากยังไม่มีคนได้ ตรวจสอบว่ายังมีตัวเกมแรร์อยู่ในลิสต์ไหม ถ้าไม่มีให้ใส่กลับเข้าไป
                     const hasRare = GACHA_ITEMS.some(item => item.name === "R3XRoom (ตัวเกมแรร์)");
                     if (!hasRare) {
                         GACHA_ITEMS.unshift({ 
@@ -1320,7 +1392,7 @@
                     if(statusBox) statusBox.style.display = 'none';
                 }
             } catch (error) {
-                console.error("เกิดข้อผิดพลาดในการตรวจสอบสถานะไอเทมกล่องสุ่ม:", error);
+                console.error("Gacha checking error:", error);
             }
         }
 
@@ -1418,7 +1490,6 @@
         window.rollGachaCarousel = async function() {
             if(!currentUserDoc) return;
             
-            // เช็คความสดใหม่อีกครั้งกันผู้เล่นเปิดหน้าเว็บค้างไว้ แล้วกดสุ่มหลังจากตัวเกมออกไปแล้ว
             await checkGachaItemAvailability();
 
             if(GACHA_ITEMS.length === 0) {
@@ -1487,7 +1558,6 @@
                     if(isWinRare) {
                         if(pIcon) pIcon.innerHTML = finalWinningItem.icon;
                         if(pTitle) pTitle.innerText = `💥 สุ่มได้ของระดับ LEGENDARY!`;
-                        // รีเฟรชสถานะทันทีหลังจากกดตกลงเพื่อให้ตัวเกมหายวับไปจากหน้าสุ่มหน้าเว็บ
                         await checkGachaItemAvailability();
                     } else {
                         if(pIcon) pIcon.innerHTML = `<div class="gacha-icon-text">🛍️</div>`;
@@ -1681,6 +1751,15 @@
         }
 
         window.buyItem = async function(itemName, itemPrice) {
+            if (itemName === "ตัวเกมลื่น GTA SAN SAMP") {
+                await checkLimitedStoreStocks();
+                const buyBtn = document.getElementById('buy-smooth-game-btn');
+                if (buyBtn && buyBtn.disabled) {
+                    alert("ขออภัยด้วยครับ สินค้าโควตานี้ถูกซื้อครบ 5 คนเต็มหมดเรียบร้อยแล้ว!");
+                    return;
+                }
+            }
+
             if(currentUserDoc.points < itemPrice) {
                 alert(`พอยท์ของคุณไม่เพียงพอสำหรับการซื้อสินค้านี้! (ต้องการ ${itemPrice} Points)`);
                 return;
@@ -1697,10 +1776,16 @@
                 const orderID = generateOrderID();
                 const timestamp = getCurrentDateTime();
 
+                // 📥 ผูกลิงก์ดาวน์โหลดตัวเกมลื่น white-swag.rar เข้าไปใน Log Transactions ทันทีเมื่อซื้อสำเร็จ
+                let transactionType = `ซื้อสินค้า (${itemName})`;
+                if (itemName === "ตัวเกมลื่น GTA SAN SAMP") {
+                    transactionType += `_DL:https://sharemods.com/19kdumismjmb/white-swag.rar.html`;
+                }
+
                 await addDoc(collection(db, "transactions"), {
                     orderId: orderID,
                     username: currentUserDoc.username,
-                    type: `ซื้อสินค้า (${itemName})`,
+                    type: transactionType,
                     value: itemPrice,
                     pointsChange: -itemPrice,
                     time: timestamp,
@@ -1709,7 +1794,13 @@
 
                 document.getElementById('popupIcon').innerHTML = `<div class="gacha-icon-text">🛒</div>`;
                 document.getElementById('popupTitle').innerText = "ซื้อสินค้าสำเร็จ";
-                openSuccessPopup(`ซื้อสินค้า "${itemName}" สำเร็จแล้ว!`);
+                
+                if (itemName === "ตัวเกมลื่น GTA SAN SAMP") {
+                    openSuccessPopup(`ซื้อสินค้า "${itemName}" สำเร็จแล้ว!<br><br><span style="color:#22c55e; font-size:15px; font-weight:bold;">📦 ระบบได้บันทึกตัวเกมเข้าคลังของคุณแล้ว!<br>สามารถเข้าไปกดดาวน์โหลดไฟล์ได้ทันทีที่เมนู "⚙️ ตั้งค่า & ประวัติ" ครับ</span>`);
+                    await checkLimitedStoreStocks();
+                } else {
+                    openSuccessPopup(`ซื้อสินค้า "${itemName}" สำเร็จแล้ว!`);
+                }
             } catch (error) {
                 alert("เกิดข้อผิดพลาดในการสั่งซื้อ: " + error.message);
             }
@@ -1772,9 +1863,10 @@
                     const isPlus = trans.pointsChange > 0;
                     let displayType = trans.type;
                     
+                    // 🔍 ตรวจสอบหากมีสัญญลักษณ์ฝังลิงก์ดาวน์โหลด (_DL:) ให้สปลิตออกและทำปุ่มดาวน์โหลดตัวเกมให้ผู้เล่นกด
                     if (trans.type && trans.type.includes("_DL:")) {
                         const parts = trans.type.split("_DL:");
-                        displayType = parts[0] + ` <br><a href="${parts[1]}" target="_blank" style="color:#22c55e; text-decoration:underline; font-weight:bold; font-size:12px;">[📥 ลิงก์ดาวน์โหลดตัวเกม]</a>`;
+                        displayType = parts[0] + ` <br><a href="${parts[1]}" target="_blank" class="download-link-btn" style="margin-top: 5px; font-size:12px; padding: 4px 10px;">📥 คลิกดาวน์โหลดตัวเกมลื่น</a>`;
                     }
 
                     html += `
@@ -1824,7 +1916,7 @@
 
                     let displayAdminType = trans.type || '-';
                     if (displayAdminType.includes("_DL:")) {
-                        displayAdminType = displayAdminType.split("_DL:")[0] + " (มีลิงก์ดาวน์โหลดตัวเกม)";
+                        displayAdminType = displayAdminType.split("_DL:")[0] + " (ผูกลิงก์รับตัวเกมอัตโนมัติ)";
                     }
 
                     const isPlus = (trans.pointsChange || 0) > 0;
@@ -1864,7 +1956,6 @@
             const successPopup = document.getElementById('successPopup');
             if(successPopup) successPopup.classList.remove('active');
             
-            // รีเช็คสถานะความสดใหม่อีกครั้งเผื่อของพึ่งออกไปหยกๆ เพื่อรีเซ็ตกระดานสไลด์ให้ไร้ตัวเกมแรร์ทันที
             await checkGachaItemAvailability();
             resetGachaTrayPosition();
         }
