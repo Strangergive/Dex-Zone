@@ -1778,7 +1778,7 @@
 
         window.processRedeemCode = async function() {
             const code = document.getElementById('coupon-code-input').value.trim().toUpperCase();
-            if(code === "DEX ZONE") {
+            if(code === " ") {
                 try {
                     const userRef = doc(db, "users", currentUserDoc.refName);
                     const newPoints = currentUserDoc.points + 30; 
